@@ -12,7 +12,6 @@ router.get('/', (req, res) => {
             res.status(200).json(posts)
         })
         .catch(error => {
-            console.log(error);
             res.status(500).json({
                 message: "The posts information could not be retrieved",
                 error: error.message
@@ -30,7 +29,6 @@ router.get('/:id', (req, res) => {
             }
         })
         .catch(error => {
-            console.log(error);
             res.status(500).json({
                 message: "The post information could not be retrieved",
                 error: error.message
@@ -54,14 +52,13 @@ router.post('/', (req, res) => {
                 res.status(201).json(posts)
             })
             .catch(error => {
-                console.log(error);
                 res.status(500).json({
                     message: "There was an error while saving the post to the database",
                     error: error.message
                 });
             });
     }
-})
+});
 
 router.delete('/:id', async (req, res) => {
     try {
@@ -79,9 +76,9 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({
             message: "The comments information could not be retrieved",
             error: error.message
-        })
+        });
     }
-})
+});
 
 router.put('/:id', (req, res) => {
     const { title, contents } = req.body;
@@ -113,44 +110,16 @@ router.put('/:id', (req, res) => {
                 }
             })
             .catch(error => {
-                console.log(error);
                 res.status(500).json({
                     message: "The post information could not be modified",
                     error: error.message
                 });
             });
     }
+});
 
-})
 
-router.get('/api/posts/:id/', async (req, res) => {
-    const { id } = req.params;
-    Post.findById(id)
-        .then(post => {
-            if (!post) {
-                res.status(404).json(
-                    {
-                        message: "The post with the specified ID does not exist"
-                    })
-            } else {
-                Post.findPostComments(id)
-                    .then(post => {
-                        res.status(200).json(post)
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        res.status(500).json({
-                            message: "The comments information could not be retrieved",
-                            error: error.message
-                        });
-                    });
-
-            }
-        })
-
-})
-
-router.get('/api/posts/:id/comments', async (req, res) => {
+router.get('/:id/comments', async (req, res) => {
     try {
         const posts = await Post.findById(req.params.id);
         if (!posts) {
@@ -160,18 +129,14 @@ router.get('/api/posts/:id/comments', async (req, res) => {
                 })
         } else {
             const stuff = await Post.findPostComments(req.params.id);
-            res.json(stuff)
-
+            res.status(200).json(stuff);
         }
     } catch (error) {
         res.status(500).json({
             message: "The comments information could not be retrieved",
             error: error.message
-        })
+        });
     }
-
-})
+});
 
 module.exports = router;
-
-
